@@ -170,7 +170,7 @@ class HyperVolume:
         decorated = [(node.cargo[i], node) for node in nodes]
         # sort by this value
         #decorated.sort()
-        sorted(decorated, key=lambda n: n[0])
+        decorated = sorted(decorated, key=lambda n: n[0])
         # write back to original list
         nodes[:] = [node for (_, node) in decorated]
             
