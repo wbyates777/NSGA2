@@ -67,6 +67,7 @@ public:
     
     double 
     compute(const std::vector<Point> &front);
+
     
 private:
 
@@ -77,18 +78,18 @@ private:
        every node has multiple predecessors and successors, one in every list.
     */
     {
-        Node( void ): idx(0), ignore(0) {}
-        Node(const Point& p): idx(0), ignore(0), point(p)
+        Node( void ): ignore(0) {}
+        Node(const Point& p): ignore(0), point(p)
         {
             next.resize(point.size(), nullptr);  
             prev.resize(point.size(), nullptr);
             volume.resize(point.size(), 0.0); 
             area.resize(point.size(), 0.0);
         }
-        ~Node( void ) { idx = ignore = 0; }
+        ~Node( void ) { ignore = 0; }
 
-        int    idx;
-        int    ignore;   
+
+        int    ignore;     
         
         Point  point;
         

@@ -73,6 +73,7 @@
 
 #include <iostream>
 #include <cassert>
+#include <numeric>
 
 HyperVolume::HyperVolume( void ) {}
 
@@ -85,12 +86,12 @@ HyperVolume::HyperVolume( const Point &refPoint )
 
 void 
 HyperVolume::append(Node* node, int index)
-//"""Appends a node to the end of the list at the given index."""
+// Appends a node to the end of the list at the given index.
 {
     Node *lastButOne = m_sentinel.prev[index];
     node->next[index] = &m_sentinel;
     node->prev[index] = lastButOne;
-    // # set the last element as the new one
+    // set the last element as the new one
     m_sentinel.prev[index] = node;
     lastButOne->next[index] = node;
 }
@@ -98,7 +99,7 @@ HyperVolume::append(Node* node, int index)
 void
 HyperVolume::remove(Node *node, int index, Point &bounds)
 {
-//"""Removes and returns 'node' from all lists in [0, 'index'[."""
+// Removes and returns 'node' from all lists in [0, 'index'[. 
     for (int i = 0; i < index; ++i)
     {
         Node* predecessor = node->prev[i];
@@ -113,11 +114,11 @@ HyperVolume::remove(Node *node, int index, Point &bounds)
     
 void
 HyperVolume::reinsert(Node *node, int index, Point &bounds)
-/* """
+/*  
     Inserts 'node' at the position it had in all lists in [0, 'index'[
     before it was removed. This method assumes that the next and previous 
     nodes of the node that is reinserted are in the list.
-""" */
+  */
 {
     for (int i = 0; i < index; ++i)
     {
@@ -143,11 +144,11 @@ HyperVolume::weaklyDominates(const Point &point, const Point &other) const
 
 double 
 HyperVolume::hvRecursive(int dimIndex, int length, Point &bounds)
-/* """
+/*  
       Recursive call to hypervolume calculation.
       In contrast to the paper, the code assumes that the reference point
       is [0, ..., 0]. This allows the avoidance of a few operations.
-""" */
+  */
 {
     double hvol = 0.0;
   
@@ -156,12 +157,12 @@ HyperVolume::hvRecursive(int dimIndex, int length, Point &bounds)
 
     if (dimIndex == 0)
     {
-        // # special case: only one dimension - why using hypervolume at all?
+        // special case: only one dimension - why using hypervolume at all?
         return -m_sentinel.next[0]->point[0];
     }
     else if (dimIndex == 1)
     {   
-        // # special case: two dimensions, end recursion
+        // special case: two dimensions, end recursion
         Node *q  = m_sentinel.next[1];
         double h = q->point[0];
         Node *p  = q->next[1];
@@ -280,9 +281,10 @@ HyperVolume::setSentinal( void )
     }
 }
 
+
 void
 HyperVolume::preProcess(const std::vector<Point> &front)
-// """Sets up the list data structure needed for calculation."""
+// Sets up the list data structure needed for calculation.
 {
     setSentinal();
     
@@ -292,25 +294,25 @@ HyperVolume::preProcess(const std::vector<Point> &front)
     for (int i = 0; i < front.size(); ++i)
     {
         m_nodes[i] = Node(front[i]);  
-        m_nodes[i].idx = i;
     }
+    
+    std::vector<int> order(m_nodes.size());
+    std::iota(order.begin(), order.end(), 0);
     
     for (int i = 0; i < dims; ++i)
     {
-        std::vector<Node> nodes = m_nodes;
-        
-        // sort by dimention // could use util::order here maybe
-        auto op = [i](const Node &a, const Node &b)  { return a.point[i] < b.point[i]; };
-        std::sort(nodes.begin(), nodes.end(), op );
-       
-        for (Node &node : nodes)
+        // order the nodes by dimention
+        auto op1 = [&](int idx1, int idx2)  { return m_nodes[idx1].point[i] < m_nodes[idx2].point[i]; };
+        std::sort(order.begin(), order.end(), op1 );
+                               
+        for (int j : order)
         {
             Node *lastButOne = m_sentinel.prev[i];
-            m_nodes[node.idx].next[i] = &m_sentinel;
-            m_nodes[node.idx].prev[i] = lastButOne;
-            // # set the last element as the new one
-            m_sentinel.prev[i] = &m_nodes[node.idx];
-            lastButOne->next[i] = &m_nodes[node.idx]; 
+            m_nodes[j].next[i] = &m_sentinel;
+            m_nodes[j].prev[i] = lastButOne;
+            // set the last element as the new one
+            m_sentinel.prev[i] = &m_nodes[j];
+            lastButOne->next[i] = &m_nodes[j]; 
         } 
     }
 }
@@ -329,7 +331,7 @@ HyperVolume::compute(const std::vector<Point> &front)
     
     for (const Point &point : front)
     {
-        // # only consider points that dominate the reference point
+        // only consider points that dominate the reference point
         if (weaklyDominates(point, m_refPoint))
             relevantPoints.push_back(point);
     }
@@ -337,9 +339,9 @@ HyperVolume::compute(const std::vector<Point> &front)
     int dims = (int) m_refPoint.size();
     if (any(m_refPoint))
     {
-        // # shift points so that refPoint == [0, ..., 0]
-        // # this way the reference point doesn't have to be explicitly used
-        // # in the HV computation
+        // shift points so that refPoint == [0, ..., 0]
+        // this way the reference point doesn't have to be explicitly used
+        // in the HV computation
         for (int i = 0; i < relevantPoints.size(); ++i)
         {
             for (int j = 0; j < dims; ++j)
