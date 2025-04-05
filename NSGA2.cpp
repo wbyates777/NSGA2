@@ -269,9 +269,9 @@ NSGA2::crowding_distance(const ObjValues &obj_values, const std::vector<int> &fr
     for (int i = 0; i < m_obj_num; ++i)
     {
         std::vector<int> order = ordering(obj_slices[i]);
-        
-        auto vals = std::minmax_element(obj_slices[i].begin(), obj_slices[i].end());
-        double val = *vals.second - *vals.first;
+ 
+        // val = maxval - minval
+        double val = obj_slices[i][order.back()] - obj_slices[i][order[0]];
         double scale_factor = (val == 0.0) ? 1.0 : val;
         
         for (int j = 1; j <  front.size()-1; ++j)
