@@ -257,12 +257,12 @@ NSGA2::crowding_distance(const ObjValues &obj_values, const std::vector<int> &fr
     dist[0]                = std::numeric_limits<double>::max();  
     dist[front.size() - 1] = std::numeric_limits<double>::max();
     
-    ObjValues obj_slices(m_obj_num, std::vector<double>(obj_values.size()));
+    ObjValues obj_slices(m_obj_num, std::vector<double>(front.size()));
     for (int i = 0; i < m_obj_num; ++i)
     {
-        for (int j : front)
+        for (int j = 0; j < front.size(); ++j)
         {
-            obj_slices[i][j] = obj_values[j][i];
+            obj_slices[i][j] = obj_values[front[j]][i];
         }
     }
 
