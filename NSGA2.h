@@ -186,7 +186,7 @@ private:
     fast_nd_sort(const ObjValues &obj_values, const Constraints &constraints) const;
     
     std::vector<int>
-    ordering( const ObjValue &values ) const;
+    ordering( const std::vector<double> &values ) const;
     
     std::vector<double>
     crowding_distance(const ObjValues &obj_values, const std::vector<int> &front) const;
