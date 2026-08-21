@@ -2,7 +2,7 @@
 
 Two implementations of: "A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II".
 
-Use this algorithm to optimise problems (with integer representations) and with multiple (real valued) objectives. 
+Use this algorithm to optimise problems (with integer representations and) with multiple (real valued) objectives. 
 Outputs a Pareto front of solutions.
 
 I have included the original paper for completeness.
